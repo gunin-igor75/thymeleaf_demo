@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>TExample</title>
+</head>
+<body>
+<div class="container">
+    <label for="defaultName">1. Example with th:text="${....}" </label>
+    <input id="defaultName"  type="text" name="userName" value="James Garrot" th:value="${defaultName}">
+
+    <br>
+    <br>
+
+    <b>2. Variable expression ${....}</b>
+    <p th:text="${greeting}">Nothing</p>
+
+    <br>
+    <br>
+    <b>3. Example with object EmployeeDto</b>
+    <p th:text="${employee.firstName}">Nothing</p>
+    <p th:text="${employee.getFullName()}">Nothing</p>
+    <p th:text="${employee['lastName']}">Nothing</p>
+
+    <br>
+    <br>
+    <b>4. Example with map</b>
+    <p th:text="${employeeMap.Peter.gender}">Nothing</p>
+    <p th:text="${employeeMap['Peter'].email}">Nothing</p>
+
+    <br>
+    <br>
+    <b>5. Example with list</b>
+    <p th:text="${employeeList[1].getFullName()}">Nothing</p>
+
+    <div  th:object="${employeeObject}">
+        <label for="email">For List email</label>
+        <span id="email" style="color: red" th:text="*{email}"></span>
+        <br>
+        <label for="gender">For List gender</label>
+        <span id="gender" style="color: blue" th:text="*{gender}"></span>
+    </div>
+    <br>
+    <br>
+    <b>7. Link Expression  @{...}</b>
+    <a th:href="@{http://localhost:8080/example/link-expression}">absolute link</a>
+    <br>
+    <br>
+    <label for="relativeLink">Relative Link</label>
+    <a id="relativeLink" th:href="@{/example/link-expression}">relative link</a>
+    <br>
+    <br>
+<!--    Если передается несколько параметров тогда через запятую status = ${'test'}), position  = ${'test'})-->
+    <label for="relativeLinkParam">Link with param</label>
+    <a id="relativeLinkParam" th:href="@{/example/link-expression(status = ${'test'})}">Link with param</a>
+    <br>
+    <br>
+    <label for="linkExpressionPath">Link expression path</label>
+    <a id="linkExpressionPath" th:href="@{example/{path}(path=${'link-expression'})}">link expression path</a>
+    <br>
+    <br>
+    <b>8. Message Expression #{...}</b>
+    <p th:text="#{home.welcome}">You re see default message</p>
+<!--    С применением тегов-->
+    <p th:utext="#{home.welcome.home}">You re see default message</p>
+    <br>
+    <b>10. Literals</b>
+<!--    Конкатенация и вставка значения числа -->
+    <div class="container">
+    <span th:text="${'some text concat to ' + ' another text'}"></span>
+    <span th:text="|1000|"></span>
+    </div>
+    <br>
+<!--Операторы сравнения-->
+    <div class="container">
+        <span th:text="${10 > 2}"></span>
+        <span th:text="${10 == 10}"></span>
+        <span th:text="${0 > 2}"></span>
+    </div>
+    <br>
+<!--    Арифметические операции-->
+    <div class="container">
+        <span th:text="${10 * 2}"></span>
+        <span th:text="${5 / 2}"></span>
+    </div>
+    <br>
+<!--    Условные операторы тернарный-->
+    <div class="container">
+        <span th:text="${greeting != null ? greeting : null}"></span>
+        <br>
+        <span th:text="${false ? _ : 'Default Message'}"></span>
+    </div>
+    <br>
+    <br>
+    <b>11. Attributes</b>
+    <br>
+    <br>
+    <label for="attr">th:attr</label>
+    <input id="attr" th:attr="value=${defaultName}"/>
+    <br>
+    <label for="attr1">th:attr > 1</label>
+    <input id="attr1" th:attr="value=${defaultName}, style='color: blue'"/>
+    <br>
+    <br>
+    <div class="row">
+        <label for="each">th:each</label>
+        <table style="color: green" id="each">
+            <tr th:each="employee, index :  ${employeeList}">
+                <td th:text="${index.index}"></td>
+                <td th:text="${employee.firstName}"></td>
+                <td th:text="${employee.lastName}"></td>
+                <td th:text="${employee.email}"></td>
+                <td th:text="${employee.isMan()} ? 'Man' : 'Woman'"></td>
+            </tr>
+        </table>
+<!--        index - данные о текущей итерации
+            - индекс            index
+            - номер             count
+            - размер списка     size
+            - значение          current
+-->
+    </div>
+    <br>
+    <br>
+<!--    Условный оператор if-->
+    <div class="row" th:if="${employeeList.size() > 2}"></div>
+    <label for="thif">th:if</label>
+    <br>
+    <span id="thif" style="color: blue" th:text="${employeeList[2]}"></span>
+    <br>
+<!--    Сработает когда выражение false-->
+    <div class="row" th:unless="${employeeList.size() < 2}">
+        <label for="thunless">th:unless</label>
+        <br>
+        <span id="thunless" th:text="'Размер больше 2'"></span>
+    </div>
+    <br>
+    <!--    Условный оператор if-->
+    <label for="thswitch">th:switch</label>
+    <div class="row" id="thswitch" th:switch="${employeeList[2].gender.toString()}">
+        <p th:case="'MALE'">Employee is a man</p>
+        <p th:case="'FEMALE'">Employee is woman</p>
+    </div>
+
+<!--    <div class="row">-->
+<!--        <button id="thonlick"-->
+<!--            th:onclick="'javascript:substituteOnClick(\' '+ ${'ONCLICK EXAMPLE'}+ '\');'">Click-->
+<!--        </button>-->
+<!--    </div>-->
+
+    <br>
+    <br>
+<!--    th"block заменяет div он отсутствует в DOM-->
+    <b>th:block</b><br>
+    <th:block th:each="em : ${employeeList}">
+        <span style="color: blue" th:text="${em.fullName}"></span>
+        <br>
+    </th:block>
+    <br>
+    <br>
+<!--    Передача аргументов в html-->
+    <span>Hello,[[${defaultName}]]!!!!</span>
+
+    <!--
+    Thymeleaf + Spring
+    th:field - работа с формами
+    th:errors
+    th:errorclass
+    ${@myBean.doSomething()}
+
+    -->
+
+</div>
+
+</body>
+</html>
